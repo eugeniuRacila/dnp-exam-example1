@@ -1,0 +1,56 @@
+﻿@page "/saved-results"
+
+@using VolumeWeb.Models
+@using VolumeWeb.Services
+
+@inject IVolumeService VolumeService;
+
+<h3>SavedResults</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Type</th>
+            <th scope="col">Height</th>
+            <th scope="col">Radius</th>
+            <th scope="col">Volume</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var volumeResult in _volumeResults)
+        {
+            <tr>
+                <th scope="row">@volumeResult.Id</th>
+                <td>@volumeResult.Type</td>
+                <td>@volumeResult.Height</td>
+                <td>@volumeResult.Radius</td>
+                <td>@(volumeResult.Volume) cm<sup>3</sup></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<VolumeResult> _volumeResults = new List<VolumeResult>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _volumeResults = await FetchVolumeResults();
+    }
+
+    private async Task<List<VolumeResult>> FetchVolumeResults()
+    {
+        try
+        {
+            return await VolumeService.GetSavedVolumeResults();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("An error happened while trying to fetch of all the saved volume results");
+            Console.WriteLine(e);
+        }
+        
+        return new List<VolumeResult>();
+    }
+}
